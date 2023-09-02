@@ -5,7 +5,8 @@ Code for Korea 프로젝트 '위로(慰勞, WeLove)
 ## 목적
 위로가 필요한 우리의 이웃들을 위로 할 수 있는 활동을 해보자.
 
-
+## 프로젝트 문서
+프로젝트 구글 계정의 구글 드라이브 - https://drive.google.com/drive/folders/1NFsWFaOmIhy_NRoicCXr2nGQhpp0cKbt?usp=drive_link
 
 # 본 Task
 DCInside 고민갤러리(고갤) 분석을 통한 활동 방향 도출
