@@ -30,6 +30,9 @@ import time
 from datetime import datetime
 import re
 
+import requests
+
+
 # 드라이버 파일은 py파일과 같은 위치에 위치하도록 합니다.
 driver = webdriver.Chrome()
 
@@ -62,6 +65,9 @@ with open(list_file_path, encoding='utf-8') as fSource:
         # open target article
         bPassed = False
         print("Ready " + artible_number)
+        webpage = requests.get(article_URL)
+
+        '''
         while bPassed==False:
             try:
                 driver.get(article_URL)
@@ -70,8 +76,8 @@ with open(list_file_path, encoding='utf-8') as fSource:
             except:
                 print("Missed article : " + artible_number+ " " + str(datetime.now()))
                 time.sleep(60)
-        time.sleep(1)
-
+        time.sleep(2)
+'''
         # completed log
         print('Done : ' + artible_number+ " " + str(datetime.now()))
 
