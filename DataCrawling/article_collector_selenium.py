@@ -42,13 +42,13 @@ from bs4 import BeautifulSoup as bs
 
 # 구분자
 welove_mark = '#C4K>'
-welove_reply = '#C4K}'
 
 
 # 웹드라이버 설정
 options = Options()
 user_agent = "Mozilla/5.0 (Linux; Android 9; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.83 Mobile Safari/537.36"
 options.add_argument('user-agent=' + user_agent)
+options.add_argument('headless') #headless모드 브라우저가 뜨지 않고 실행됩니다.
 options.add_argument('--blink-settings=imagesEnabled=false') 
 options.add_argument('--mute-audio') 
 
@@ -56,11 +56,10 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install(),option
 
 ## 작업 환경 설정
 # 수집 대상 목록 파일 - 전체 목록 파일 중, 수집 할 대상만 저장한 텍스트 파일(각 행 가장 앞에 글 번호만 있으면 되며, 일단 글목록 형식을 따르는 것으로 가정)
-# list_file_path = 'DCInsideGoGall_300000_3_list.text'
-list_file_path = 'sample_list.text'
+list_file_path = 'DCInsideGoGall_List_296300_3.text'
 
 # 결과 파일 경로
-result_file_path = 'DCInsideGoGall_300000_3.text'
+result_file_path = list_file_path+'.result'
 
 # 각 글 연결 URL 기본 형식 - 가장 마지막에 글 번호만 붙이면 됨.
 base_URL = 'https://gall.dcinside.com/board/view/?id=agony&no='
@@ -71,6 +70,7 @@ base_URL = 'https://gall.dcinside.com/board/view/?id=agony&no='
 fResult = open(result_file_path, 'w',encoding='UTF-8')
 
 # 목록 파일 행 순회
+row_cnt = 0
 with open(list_file_path, encoding='utf-8') as fSource:
    for line in fSource:
        
@@ -89,10 +89,13 @@ with open(list_file_path, encoding='utf-8') as fSource:
                 driver.get(article_URL)
                 element = wait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "view_comment")))
                 bPassed = True
-                time.sleep(3)
+                time.sleep(1)
             except:
                 print("Missed page " + str(artible_number))
-                time.sleep(60)
+                # 혹시 모르니 여기까지 저장해두고.
+                fResult.close()
+                fResult = open(result_file_path, 'a+t',encoding='UTF-8')
+                time.sleep(30)
 
         # body
         soup = bs(driver.page_source, 'html.parser')
@@ -113,46 +116,54 @@ with open(list_file_path, encoding='utf-8') as fSource:
             fResult.write(div.text.lstrip())
 
         # comment 
-        cmt_list = driver.find_element(by=By.CLASS_NAME,value="cmt_list")
+        try:
+            cmt_list = driver.find_element(by=By.CLASS_NAME,value="cmt_list")
 
-        cmts = cmt_list.find_elements(by=By.TAG_NAME,value="li")
-        # 댓글도 더 깊은 Depth에서 검출 되기 때문에 댓글 여부를 먼저 판정하기 위해 최상위 레벨의 li만 추출 -> 보류
-        #cmts = cmt_list.find_elements(by=By.CSS_SELECTOR,value="li:first-of-type")
-        #print(len(cmts))
+            cmts = cmt_list.find_elements(by=By.TAG_NAME,value="li")
+            # 댓글도 더 깊은 Depth에서 검출 되기 때문에 댓글 여부를 먼저 판정하기 위해 최상위 레벨의 li만 추출 -> 보류
+            #cmts = cmt_list.find_elements(by=By.CSS_SELECTOR,value="li:first-of-type")
+            #print(len(cmts))
 
-        for cmt in cmts:
-            try:
-                # comment - 광고행 등, 댓글 없으면 바로 예외 처리 하기 위해 가장 먼저 검사
-                cmt_txt = cmt.find_element(by=By.CLASS_NAME,value="usertxt")
+            for cmt in cmts:
+                try:
+                    # comment - 광고행 등, 댓글 없으면 바로 예외 처리 하기 위해 가장 먼저 검사
+                    cmt_txt = cmt.find_element(by=By.CLASS_NAME,value="usertxt")
 
-                # nickname & date
-                nickname = cmt.find_element(by=By.TAG_NAME,value="em")#cmt.find_element(by=By.CLASS_NAME,value="nickname in")
-                
-                # 광고 필터링
-                if nickname==None:
-                    continue
+                    # nickname & date
+                    nickname = cmt.find_element(by=By.TAG_NAME,value="em")#cmt.find_element(by=By.CLASS_NAME,value="nickname in")
+                    
+                    # 광고 필터링
+                    if nickname==None:
+                        continue
 
-                # user/ date
-                cmt_date = cmt.find_element(by=By.CLASS_NAME,value="date_time")
-                #print(nickname.text.strip()+"|"+cmt_date.text.strip())
-                #print(cmt_txt.text.strip())   
+                    # user/ date
+                    cmt_date = cmt.find_element(by=By.CLASS_NAME,value="date_time")
+                    #print(nickname.text.strip()+"|"+cmt_date.text.strip())
+                    #print(cmt_txt.text.strip())   
 
-                # 댓글 여부
-                #reply_div = cmt.find_element(by=By.CLASS_NAME,value="reply_box")
-                #if not reply_div:
-                #    fResult.write(welove_mark+nickname.text.strip()+"|"+cmt_date.text.strip()+'\n')
-                #else:
-                #    fResult.write(welove_reply+nickname.text.strip()+"|"+cmt_date.text.strip()+'\n')
-                fResult.write(welove_mark+nickname.text.strip()+"|"+cmt_date.text.strip()+'\n')
-                fResult.write(cmt_txt.text.strip()+'\n')
+                    # 댓글 여부
+                    #reply_div = cmt.find_element(by=By.CLASS_NAME,value="reply_box")
+                    #if not reply_div:
+                    #    fResult.write(welove_mark+nickname.text.strip()+"|"+cmt_date.text.strip()+'\n')
+                    #else:
+                    #    fResult.write(welove_reply+nickname.text.strip()+"|"+cmt_date.text.strip()+'\n')
+                    fResult.write(welove_mark+nickname.text.strip()+"|"+cmt_date.text.strip()+'\n')
+                    fResult.write(cmt_txt.text.strip()+'\n')
 
-            except NoSuchElementException:
-                print("Not comment row")    
+                except NoSuchElementException:
+                    print("Not comment row")   
+
+        except NoSuchElementException:
+            print("No comment")    
 
         # end of an article
         fResult.write(welove_mark+"X\n\n")   
         # completed log
         print('Done : ' + artible_number+ " " + str(datetime.now()))
 
+        #  저장이 안될 경우를 대비하여 100개마다 저장 후 다시 열기
+        if row_cnt % 100 == 0:
+            fResult.close()
+            fResult = open(result_file_path, 'a+t',encoding='UTF-8')
    
 fResult.close()
