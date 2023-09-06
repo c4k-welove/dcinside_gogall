@@ -21,20 +21,37 @@
 #       본 코드는 디시인사이드 고민 갤러리의 글들의 분석을 위한 글 본문과 댓글 수집 코드 입니다.
 #       수집 된 데이터를 이용하여 다양한 고민의 유형을 분석하여, 도움이 될 만한 활동을 도출하고자 합니다.
 #
+#   수집봇 차단 처리 헤더 설정 참고 : https://pgh268400.tistory.com/310
+#       
+#   XXXX  댓글은 아래 코드로 수집이 불가능 합니다. XXXX
+#
 ##############################
 
-import selenium
-from selenium import webdriver
-from selenium.webdriver.common.by import By
 import time
 from datetime import datetime
-import re
-
 import requests
+from bs4 import BeautifulSoup as bs
+
+# 구분자
+welove_mark = '#C4K>'
 
 
-# 드라이버 파일은 py파일과 같은 위치에 위치하도록 합니다.
-driver = webdriver.Chrome()
+#봇 차단을 위한 헤더 설정
+headers = {
+    "Connection" : "keep-alive",
+    "Cache-Control" : "max-age=0",
+    "sec-ch-ua-mobile" : "?0",
+    "DNT" : "1",
+    "Upgrade-Insecure-Requests" : "1",
+    "User-Agent" : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36",
+    "Accept" : "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "Sec-Fetch-Site" : "none",
+    "Sec-Fetch-Mode" : "navigate",
+    "Sec-Fetch-User" : "?1",
+    "Sec-Fetch-Dest" : "document",
+    "Accept-Encoding" : "gzip, deflate, br",
+    "Accept-Language" : "ko-KR,ko;q=0.9"
+    }
 
 
 ## 작업 환경 설정
@@ -64,24 +81,58 @@ with open(list_file_path, encoding='utf-8') as fSource:
 
         # open target article
         bPassed = False
-        print("Ready " + artible_number)
-        webpage = requests.get(article_URL)
-
-        '''
         while bPassed==False:
+
             try:
-                driver.get(article_URL)
+                print("Try... " + article_URL)
+                res = requests.get(article_URL, headers=headers)
+                time.sleep(1)
+
+                soup = bs(res.text, "html.parser")
+
+                # URL
+                print(welove_mark+article_URL)
+
+                # Title
+                title = soup.select(".title_subject") 
+                print(welove_mark+title[0].text.strip(), end="")
+
+                # article body
+                body_divs = soup.select(".write_div") 
+                for div in body_divs:
+                    print(div.text, end="")
+
+                # comments - commnets는 후처리로 읽어서  request 된 결과에 없음.              
+                '''
+                for cmt in cmmts_ul:
+
+                    # nickname & date
+                    nickname = cmt.select_one(".nickname")
+                    cmt_date = cmt.select_one(".date_time")
+                    print(welove_mark+nickname.text.strip()+"|"+cmt_date.text.strip())
+
+                    # comment
+                    cmt_txt = cmt.select_one("usertxt")
+                    print(cmt_txt.text.strip())
+                '''
+
+                # end of article
+                print(welove_mark+"X\n")
+
                 bPassed = True
-                print("Opened " + artible_number)
             except:
-                print("Missed article : " + artible_number+ " " + str(datetime.now()))
-                time.sleep(60)
-        time.sleep(2)
-'''
+                print("Failed and Retry... "+article_URL)
+                time.sleep(10)
+
         # completed log
         print('Done : ' + artible_number+ " " + str(datetime.now()))
 
-
-
-
+    
 fResult.close()
+
+
+
+
+
+
+
