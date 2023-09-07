@@ -56,7 +56,7 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install(),option
 
 ## 작업 환경 설정
 # 수집 대상 목록 파일 - 전체 목록 파일 중, 수집 할 대상만 저장한 텍스트 파일(각 행 가장 앞에 글 번호만 있으면 되며, 일단 글목록 형식을 따르는 것으로 가정)
-list_file_path = 'DCInsideGoGall_List_296300_3.text'
+list_file_path = 'DCInsideGoGall_List_98176_3.text'
 
 # 결과 파일 경로
 result_file_path = list_file_path+'.result'
@@ -95,7 +95,9 @@ with open(list_file_path, encoding='utf-8') as fSource:
                 # 혹시 모르니 여기까지 저장해두고.
                 fResult.close()
                 fResult = open(result_file_path, 'a+t',encoding='UTF-8')
-                time.sleep(30)
+                # 새로고침 하면 다시 진행 되는 경우가 있으므로
+                driver.refresh()
+                time.sleep(10)
 
         # body
         soup = bs(driver.page_source, 'html.parser')
@@ -167,3 +169,6 @@ with open(list_file_path, encoding='utf-8') as fSource:
             fResult = open(result_file_path, 'a+t',encoding='UTF-8')
    
 fResult.close()
+
+# 웹 드라이버 종료
+driver.quit()
