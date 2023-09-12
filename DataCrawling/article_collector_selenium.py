@@ -28,6 +28,9 @@
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import TimeoutException
+
+
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
@@ -56,7 +59,7 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install(),option
 
 ## 작업 환경 설정
 # 수집 대상 목록 파일 - 전체 목록 파일 중, 수집 할 대상만 저장한 텍스트 파일(각 행 가장 앞에 글 번호만 있으면 되며, 일단 글목록 형식을 따르는 것으로 가정)
-list_file_path = 'DCInsideGoGall_List_98176_3.text'
+list_file_path = 'DCInside_gogall_list_1760335_1742024.text'
 
 # 결과 파일 경로
 result_file_path = list_file_path+'.result'
@@ -84,20 +87,34 @@ with open(list_file_path, encoding='utf-8') as fSource:
         print("Ready " + article_URL)
 
         bPassed = False
+        retry_cnt=0
         while bPassed==False:
             try:
                 driver.get(article_URL)
                 element = wait(driver, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "view_comment")))
                 bPassed = True
-                time.sleep(1)
-            except:
-                print("Missed page " + str(artible_number))
+                time.sleep(3)
+                retry_cnt=0
+            #except TimeoutError:
+            except TimeoutException:
+                print("Timeout page " + str(artible_number))
                 # 혹시 모르니 여기까지 저장해두고.
                 fResult.close()
                 fResult = open(result_file_path, 'a+t',encoding='UTF-8')
+                time.sleep(300)
+
                 # 새로고침 하면 다시 진행 되는 경우가 있으므로
-                driver.refresh()
+                driver.close()
                 time.sleep(10)
+                driver = webdriver.Chrome(service=Service(ChromeDriverManager().install(),options=options))
+                time.sleep(5)
+
+            except:
+                pass
+        
+        if bPassed==False:
+            continue
+
 
         # body
         soup = bs(driver.page_source, 'html.parser')
