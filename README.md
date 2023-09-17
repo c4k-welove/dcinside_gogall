@@ -27,6 +27,7 @@ DCInside 고민갤러리(고갤) 분석을 통한 활동 방향 도출
     * 고갤 글 목록 수집(DataCrawling/list_collector.pys)
 * 수집 된 데이터를 이용한 고민 분석(데이터분석)
     * 분석한 글을 블로그 등에 게시하여 고민을 나누거나 고민을 덜 수 있는 방법을 제안
+    * 위로와 관심을 받을 수 있는 글 제목(AttractiveTitle/*.py)
     * 이 데이터를 이용하여 분석한 블로그 포스트 주소를 알려주세요~(wonil.shim@gmail.com)
 
 
