@@ -27,6 +27,7 @@ DCInside 고민갤러리(고갤) 분석을 통한 활동 방향 도출
     * 고갤 글 목록 수집(DataCrawling/list_collector.pys)
 * 수집 된 데이터를 이용한 고민 분석(데이터분석)
     * 분석한 글을 블로그 등에 게시하여 고민을 나누거나 고민을 덜 수 있는 방법을 제안
+    * 이 데이터를 이용하여 분석한 블로그 포스트 주소를 알려주세요~(wonil.shim@gmail.com)
 
 
 
@@ -47,4 +48,16 @@ Code for Korea '위로' 프로젝트(Slack : https://code-for-korea.slack.com/ar
 # 결과물
 
 ## DCInside 고민 갤러리(https://gall.dcinside.com/board/view/?id=agony)
+
+### 글목록
 * 글 목록(~2023.8.31) : https://drive.google.com/file/d/1tzcjHYIwrdZnlTu5u62F1fYjC2-kZJfG/view?usp=drive_link
+* 댓글있는 글 목록(~2023.8.31) : https://drive.google.com/file/d/13FRCeDtysC0HFzpbef_eUjn-Q_kuqzRN/view?usp=drive_link
+
+
+* 글 목록(JSON)(~2023.9.11) : https://drive.google.com/file/d/1eL3ZykC0neI0Yh-oTJpbHYby-1kq7plZ/view?usp=drive_link
+* 댓글있는 글 목록(JSON)(~2023.9.11) : https://drive.google.com/file/d/1LpVjnq1jp4KnScCFaH3pP0bTYUq6lGkO/view?usp=drive_link
+
+
+### 고민글
+* 최근 10만건 : https://drive.google.com/drive/folders/1yOq_frrXIUENW0CT_kww581c5PSx9CbY?usp=drive_link
+
