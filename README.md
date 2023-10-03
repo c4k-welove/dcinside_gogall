@@ -68,3 +68,9 @@ Code for Korea '위로' 프로젝트(Slack : https://code-for-korea.slack.com/ar
 ### 고민글
 * 최근 10만건 : https://drive.google.com/drive/folders/1yOq_frrXIUENW0CT_kww581c5PSx9CbY?usp=drive_link
 
+
+
+## 청소년들의 카카오 오픈채팅방 대화
+
+### 대화 및 형태소 분석기 결과(komoran, mecab)
+* 엑셀로 합쳐진 파일 경오 : https://docs.google.com/spreadsheets/d/1L-JrKZV_XDJ5QH7TkvmDwpZQEBdz4d-u/edit?usp=drive_link&ouid=105601224460289989796&rtpof=true&sd=true
